@@ -1,0 +1,18 @@
+  await axios.post(
+    process.env.WHATSAPP_SEND_MESSAGE_API,
+    {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: waid,
+      type: "text",
+      text: {
+        preview_url: false,
+        body: reply,
+      },
+    },
+    {
+      headers: {
+        Authorization: "Bearer " + process.env.WHATSAPP_TOKEN,
+      },
+    }
+  );
