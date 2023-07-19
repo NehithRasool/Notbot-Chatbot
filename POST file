@@ -1,0 +1,54 @@
+app.post("/api/webhook", async (req, res) => {
+  try {
+    // Parse the request body from the POST
+    const body = req.body;
+
+    // Check the Incoming webhook message
+    console.log("Incoming webhook: " + JSON.stringify(body));
+
+    // Validate the webhook
+    if (req.body.object) {
+      // Handle the event
+      if (req.body.object === "whatsapp_business_account") {
+        const entry = req.body.entry[0];
+
+        // Handle the message
+        if (entry.changes) {
+          for (const change of entry.changes) {
+            if (
+              change.value &&
+              change.field === "messages" &&
+              change.value.contacts &&
+              change.value.messages
+            ) {
+              // Handle the value
+              const value = change.value;
+
+              const userName = value.contacts[0].profile.name;
+
+              const messages = value.messages;
+
+              // Handle messages
+              for (const message of messages) {
+                if (
+                  message.type === "text" &&
+                  message.text &&
+                  message.text.body
+                ) {
+                  const waid = message.from;
+                  const text = message.text.body;
+                  const msgId = message.id;
+                  console.log(
+                    "Message from " + waid + " - " + userName + ": " + text
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error occured " + err);
+  }
+});
